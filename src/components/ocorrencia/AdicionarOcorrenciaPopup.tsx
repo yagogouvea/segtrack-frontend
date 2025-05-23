@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '@/services/api';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -11,6 +11,8 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { DialogClose, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import axios from 'axios';
+
 
 const tiposOcorrencia = [
   'Acidente', 'Furto', 'Perda de Sinal', 'Preservação', 'Suspeita', 'Roubo', 'Apropriação',
@@ -70,15 +72,17 @@ const PopupNovaOcorrencia = ({
   const debouncedCoordenadas = useDebounce(coordenadas, 1000);
 
   useEffect(() => {
-    axios.get('/api/clientes/resumo').then(res => setClientes(res.data));
-  }, []);
+  api.get('/clientes/resumo')
+    .then(res => setClientes(res.data))
+    .catch(err => console.error('Erro ao buscar clientes:', err));
+}, []);
 
   useEffect(() => {
     debouncedPlacas.forEach((placa, i) => {
       const placaFormatada = placa.toUpperCase();
       const placaValida = /^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/;
       if (placaValida.test(placaFormatada)) {
-        axios.get(`/api/veiculos/${placaFormatada}`)
+        api.get(`/veiculos/${placaFormatada}`)
           .then(res => {
             const novaModelos = [...modelos];
             const novaCores = [...cores];
@@ -155,19 +159,19 @@ const PopupNovaOcorrencia = ({
     }
 
     try {
-      await axios.post('/api/ocorrencias', novaOcorrencia);
-      console.log('Ocorrência salva com sucesso');
-    } catch (err) {
-      console.error('Erro ao salvar ocorrência:', err);
-      alert('Erro ao salvar ocorrência. Tente novamente.');
-      return;
-    }
+  await api.post('/ocorrencias', novaOcorrencia);
+  console.log('Ocorrência salva com sucesso');
+} catch (err) {
+  console.error('Erro ao salvar ocorrência:', err);
+  alert('Erro ao salvar ocorrência. Tente novamente.');
+  return;
+}
 
-    onSave({
-      placa1: placas[0],
-      cliente: clienteSelecionado,
-      tipo: tipoOcorrencia
-    });
+onSave({
+  placa1: placas[0],
+  cliente: clienteSelecionado,
+  tipo: tipoOcorrencia
+});
 
     onClose();
   };
