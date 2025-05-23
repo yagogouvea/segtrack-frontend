@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Prestador } from '@/types/prestador';
 import { X, Check } from 'lucide-react';
+import api from '@/services/api'; // ⬅️ Adicione no topo
 
 interface Props {
   onClose: () => void;
@@ -98,20 +99,18 @@ const PrestadorPopup: React.FC<Props> = ({ onClose, onSave, prestadorEdicao }) =
     setForm({ ...form, regioes: form.regioes?.filter(r => r !== regiao) });
   };
 
-  const salvar = async () => {
-    const metodo = prestadorEdicao ? 'PUT' : 'POST';
-    const url = prestadorEdicao
-      ? `http://localhost:3001/api/prestadores/${prestadorEdicao.id}`
-      : 'http://localhost:3001/api/prestadores';
-
-    await fetch(url, {
-      method: metodo,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
-    });
-
+ const salvar = async () => {
+  try {
+    if (prestadorEdicao) {
+      await api.put(`/api/prestadores/${prestadorEdicao.id}`, form);
+    } else {
+      await api.post('/api/prestadores', form);
+    }
     onSave();
-  };
+  } catch (err) {
+    console.error('❌ Erro ao salvar prestador:', err);
+  }
+};
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
