@@ -1,3 +1,4 @@
+import api from '@/services/api';
 import { pdf } from '@react-pdf/renderer';
 import RelatorioPDF from './RelatorioPDF';
 
@@ -21,10 +22,7 @@ export const gerarRelatorioPDF = async (ocorrenciaId: string, setGerando: (v: bo
     formData.append('tipo', dados.tipo);
     formData.append('dataAcionamento', dados.data_acionamento);
 
-    const upload = await fetch('http://localhost:3001/api/relatorios/upload', {
-      method: 'POST',
-      body: formData
-    });
+    const upload = await api.post(`http://localhost:3001/api/relatorios/upload`);
 
     if (!upload.ok) throw new Error('Erro ao enviar relatório');
 

@@ -1,3 +1,4 @@
+import api from '@/services/api';
 import React, { useState, useEffect } from 'react';
 import { Button } from '../components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,7 +24,7 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   const [filtro, setFiltro] = useState('');
 
   useEffect(() => {
-    fetch('/api/prestadores/popup')
+    api.get(`/api/prestadores/popup`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
