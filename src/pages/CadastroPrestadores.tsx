@@ -3,7 +3,7 @@ import { Prestador } from '@/types/prestador';
 import PrestadorPopup from '../components/PrestadorPopup';
 import { Input } from '@/components/ui/input';
 import * as XLSX from 'xlsx';
-import api from '@/services/api'; // ✅ usa a instância global
+import api from '@/services/api'; // ✅ novo import
 
 const CadastroPrestadores: React.FC = () => {
   const [prestadores, setPrestadores] = useState<Prestador[]>([]);
@@ -13,7 +13,7 @@ const CadastroPrestadores: React.FC = () => {
 
   const carregarPrestadores = async () => {
     try {
-      const resposta = await api.get('/api/prestadores'); // ✅ corrigido
+      const resposta = await api.get('/api/prestadores'); // ✅ atualizado
       const dados = resposta.data;
       if (!Array.isArray(dados)) {
         setPrestadores([]);
@@ -39,7 +39,7 @@ const CadastroPrestadores: React.FC = () => {
   const handleExcluir = async (id: number) => {
     if (!window.confirm('Tem certeza que deseja excluir este prestador?')) return;
     try {
-      await api.delete(`/api/prestadores/${id}`); // ✅ corrigido
+      await api.delete(`/api/prestadores/${id}`); // ✅ atualizado
       carregarPrestadores();
     } catch (erro) {
       console.error('❌ Erro ao excluir prestador:', erro);
@@ -95,7 +95,103 @@ const CadastroPrestadores: React.FC = () => {
 
   return (
     <div className="p-4 space-y-4">
-      {/* ... resto permanece igual ... */}
+      <div className="flex justify-between items-center">
+        <h1 className="text-xl font-bold">Prestadores</h1>
+        <div className="flex gap-2">
+          <button
+            onClick={exportarExcel}
+            className="bg-gray-200 px-4 py-2 rounded text-sm hover:bg-gray-300"
+          >
+            Exportar Excel
+          </button>
+          <button
+            onClick={() => alert('Funcionalidade futura de aprovações')}
+            className="bg-yellow-200 px-4 py-2 rounded text-sm hover:bg-yellow-300"
+          >
+            Aprovações Pendentes
+          </button>
+          <button
+            onClick={() => {
+              setPrestadorSelecionado(null);
+              setPopupAberto(true);
+            }}
+            className="bg-blue-600 text-white px-4 py-2 rounded text-sm"
+          >
+            + Cadastrar Prestador
+          </button>
+        </div>
+      </div>
+
+      <Input
+        placeholder="Pesquisar por nome, CPF, codinome, função ou região"
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+      />
+
+      <div className="overflow-auto rounded-md border">
+        <table className="min-w-full text-sm text-left">
+          <thead className="bg-gray-100 font-semibold">
+            <tr>
+              <th className="px-4 py-2">Nome</th>
+              <th className="px-4 py-2">CPF</th>
+              <th className="px-4 py-2">Codinome</th>
+              <th className="px-4 py-2">Telefone</th>
+              <th className="px-4 py-2">Funções</th>
+              <th className="px-4 py-2">Regiões</th>
+              <th className="px-4 py-2">Status</th>
+              <th className="px-4 py-2 text-right">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {prestadoresFiltrados.map(prestador => (
+              <tr key={prestador.id} className="border-t hover:bg-gray-50">
+                <td className="px-4 py-2 font-medium whitespace-nowrap">{prestador.nome}</td>
+                <td className="px-4 py-2 whitespace-nowrap">{prestador.cpf}</td>
+                <td className="px-4 py-2 whitespace-nowrap">{prestador.cod_nome}</td>
+                <td className="px-4 py-2 whitespace-nowrap">
+                  <a
+                    href={formatarTelefoneParaWhatsApp(prestador.telefone ?? '')}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline"
+                  >
+                    {prestador.telefone}
+                  </a>
+                </td>
+                <td className="px-4 py-2">{prestador.funcoes?.map((f: any) => typeof f === 'string' ? f : f.funcao).join(', ')}</td>
+                <td className="px-4 py-2">
+                  <ul className="list-disc ml-4">
+                    {prestador.regioes?.slice(0, 3).map((r: any) => (
+                      <li key={typeof r === 'string' ? r : r.id}>{formatarRegiao(typeof r === 'string' ? r : r.regiao)}</li>
+                    ))}
+                    {prestador.regioes && prestador.regioes.length > 3 && (
+                      <li>+{prestador.regioes.length - 3} mais</li>
+                    )}
+                  </ul>
+                </td>
+                <td className="px-4 py-2">
+                  {prestador.aprovado ? (
+                    <span className="text-green-600 font-semibold">Aprovado</span>
+                  ) : (
+                    <span className="text-yellow-600 font-semibold">Pendente</span>
+                  )}
+                </td>
+                <td className="px-4 py-2 text-right whitespace-nowrap space-x-2">
+                  <button
+                    onClick={() => handleEditar(prestador)}
+                    className="text-sm px-3 py-1 bg-yellow-400 rounded"
+                  >Editar</button>
+                  <button
+                    onClick={() => handleExcluir(prestador.id!)}
+                    className="text-sm px-3 py-1 bg-red-600 text-white rounded"
+                  >Excluir</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       {popupAberto && (
         <PrestadorPopup
           onClose={() => setPopupAberto(false)}
