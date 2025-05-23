@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ClientePopup from "@/components/ClientePopup";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
+import api from "@/services/api"; // ✅ usa a instância configurada
 
 interface Cliente {
   id: number;
@@ -18,9 +19,8 @@ const CadastroClientes: React.FC = () => {
 
   const carregarClientes = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/clientes");
-      const data = await res.json();
-      setClientes(data);
+      const res = await api.get("/api/clientes"); // ✅ corrigido
+      setClientes(res.data);
     } catch (err) {
       console.error("Erro ao carregar clientes:", err);
     }
@@ -38,9 +38,7 @@ const CadastroClientes: React.FC = () => {
   const handleExcluir = async (id: number) => {
     if (!confirm("Deseja realmente excluir este cliente?")) return;
     try {
-      await fetch(`http://localhost:3001/api/clientes/${id}`, {
-        method: "DELETE",
-      });
+      await api.delete(`/api/clientes/${id}`); // ✅ corrigido
       carregarClientes();
     } catch (err) {
       console.error("Erro ao excluir cliente:", err);
