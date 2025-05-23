@@ -401,7 +401,8 @@ onOpenChange={(open) => {
           <DialogContent>
             <AdicionarOcorrenciaPopup
               onSave={() => {
-                axios.get('/api/ocorrencia')
+                axios.get('/api/ocorrencias') // ✅ correto
+
   .then(res => setOcorrencias(res.data))
 
                   .catch(err => console.error('Erro ao atualizar lista de ocorrências', err));
