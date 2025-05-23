@@ -399,8 +399,11 @@ onOpenChange={(open) => {
             </Button>
           </DialogTrigger>
           <DialogContent>
+            
             <AdicionarOcorrenciaPopup
+            
               onSave={() => {
+                console.log('🔁 Buscando ocorrências após salvar nova...');
                 axios.get('/api/ocorrencias') // ✅ correto
 
   .then(res => setOcorrencias(res.data))
