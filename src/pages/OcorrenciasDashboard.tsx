@@ -33,7 +33,8 @@ const OcorrenciasPage: React.FC = () => {
   useEffect(() => {
     const carregarOcorrencias = async () => {
       try {
-        const res = await axios.get('/api/ocorrencias');
+        const res = await axios.get('/api/ocorrencia')
+
         const data = res.data;
 
         if (Array.isArray(data)) {
@@ -75,8 +76,14 @@ const formatarDataHora = (isoString?: string | null): string => {
 
  const finalizarOcorrencia = async (id: number) => {
   try {
-    const resposta = await fetch(`/api/ocorrencias/${id}/encerrar`, {
+    const resposta = await fetch(`/api/ocorrencia/${id}/encerrar`, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        resultado: 'Encerramento manual' // ou outro valor apropriado
+      })
     });
 
     if (!resposta.ok) {
@@ -95,6 +102,7 @@ const formatarDataHora = (isoString?: string | null): string => {
     alert('Falha ao encerrar ocorrência.');
   }
 };
+
 
   const emAndamento = Array.isArray(ocorrencias)
     ? ocorrencias.filter(o => o.status === 'Em andamento')
@@ -313,7 +321,8 @@ onOpenChange={(open) => {
         ocorrencia={oc}
         onUpdate={async (dados: Partial<Ocorrencia>) => {
           try {
-            await axios.put(`/api/ocorrencias/${oc.id}`, dados);
+            await axios.put(`/api/ocorrencia/${oc.id}`, dados);
+
             setOcorrencias(prev =>
               prev.map(o => (o.id === oc.id ? { ...o, ...dados } : o))
             );
@@ -389,8 +398,9 @@ onOpenChange={(open) => {
           <DialogContent>
             <AdicionarOcorrenciaPopup
               onSave={() => {
-                axios.get('/api/ocorrencias')
-                  .then(res => setOcorrencias(res.data))
+                axios.get('/api/ocorrencia')
+  .then(res => setOcorrencias(res.data))
+
                   .catch(err => console.error('Erro ao atualizar lista de ocorrências', err));
                 setNovoDialogAberto(false);
               }}
