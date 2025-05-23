@@ -159,7 +159,8 @@ useEffect(() => {
     }
 
     try {
-  await api.post('/api/ocorrencia', novaOcorrencia);
+ await api.post('/api/ocorrencias', novaOcorrencia);
+
 
 
   console.log('Ocorrência salva com sucesso');

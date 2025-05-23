@@ -33,7 +33,8 @@ const OcorrenciasPage: React.FC = () => {
   useEffect(() => {
     const carregarOcorrencias = async () => {
       try {
-        const res = await axios.get('/api/ocorrencia')
+        const res = await axios.get('/api/ocorrencias');
+
 
         const data = res.data;
 
@@ -76,7 +77,8 @@ const formatarDataHora = (isoString?: string | null): string => {
 
  const finalizarOcorrencia = async (id: number) => {
   try {
-    const resposta = await fetch(`/api/ocorrencia/${id}/encerrar`, {
+    const resposta = await fetch(`/api/ocorrencias/${id}/encerrar`, {
+
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -321,7 +323,8 @@ onOpenChange={(open) => {
         ocorrencia={oc}
         onUpdate={async (dados: Partial<Ocorrencia>) => {
           try {
-            await axios.put(`/api/ocorrencia/${oc.id}`, dados);
+            await axios.put(`/api/ocorrencias/${oc.id}`, dados);
+
 
             setOcorrencias(prev =>
               prev.map(o => (o.id === oc.id ? { ...o, ...dados } : o))
