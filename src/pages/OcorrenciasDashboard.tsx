@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, 
+useEffect } from 'react';
 import axios from 'axios';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,22 +19,38 @@ import StatusRecuperacaoPopup from '@/components/ocorrencia/StatusRecuperacaoPop
 import { Ocorrencia } from "@/types/ocorrencia";
 
 const OcorrenciasPage: React.FC = () => {
+
+  const atualizarOcorrencia = (atualizada: Ocorrencia) => {
+    setOcorrencias(prev =>
+      prev.map(o => (o.id === atualizada.id ? { ...o, ...atualizada } : o))
+    );
+  };
+
   const [ocorrencias, setOcorrencias] = useState<Ocorrencia[]>([]);
   const [dialogAberto, setDialogAberto] = useState<{ id: number; tipo: string } | null>(null);
-  const [novoDialogAberto, setNovoDialogAberto] = useState(false);
+  const [novoDialogAberto, setNovoDialogAberto] = useState<boolean>(false);
 
   useEffect(() => {
-  axios.get('/api/ocorrencias')
-    .then(res => {
-      const data = res.data;
-      const lista = Array.isArray(data) ? data : [];
-      if (!Array.isArray(lista)) {
-        console.error('Resposta inesperada da API de ocorrências:', data);
+    const carregarOcorrencias = async () => {
+      try {
+        const res = await axios.get('/api/ocorrencias');
+        const data = res.data;
+
+        if (Array.isArray(data)) {
+          setOcorrencias(data);
+        } else {
+          console.warn('⚠️ API não retornou um array de ocorrências:', data);
+          setOcorrencias([]);
+        }
+      } catch (err) {
+        console.error('❌ Erro ao carregar ocorrências:', err);
+        setOcorrencias([]);
       }
-      setOcorrencias(lista);
-    })
-    .catch(err => console.error('Erro ao carregar ocorrências:', err));
-}, []);
+    };
+
+    carregarOcorrencias();
+  }, []);
+
 
 
 useEffect(() => {
@@ -79,13 +96,13 @@ const formatarDataHora = (isoString?: string | null): string => {
   }
 };
 
-  const emAndamento = ocorrencias.filter(o => o.status === 'Em andamento');
-const finalizadas = ocorrencias.filter(o =>
-  o.status === 'encerrada' &&
- o.encerradaEm &&
-(new Date().getTime() - new Date(o.encerradaEm).getTime()) / 3600000 <= 24
-
-);
+  const emAndamento = Array.isArray(ocorrencias)
+    ? ocorrencias.filter(o => o.status === 'Em andamento')
+    : [];
+const finalizadas = Array.isArray(ocorrencias)
+    ? ocorrencias.filter(o => o.status === 'encerrada' && o.encerradaEm &&
+        (new Date().getTime() - new Date(o.encerradaEm).getTime()) / 3600000 <= 24)
+    : [];
 
 
   const renderEtapas = (oc: Ocorrencia) => {
@@ -137,11 +154,16 @@ const finalizadas = ocorrencias.filter(o =>
     </DialogTrigger>
     <DialogContent>
       <KMPopup
-        key={oc.id}
-       ocorrencia={ocorrencias.find(o => o.id === oc.id)!}
-        onUpdate={setOcorrencias}
-        onClose={() => setDialogAberto(null)}
-      />
+  key={oc.id}
+  ocorrencia={ocorrencias.find(o => o.id === oc.id)!}
+  onUpdate={(atualizada) =>
+    setOcorrencias(prev =>
+      prev.map(o => (o.id === atualizada.id ? { ...o, ...atualizada } : o))
+    )
+  }
+  onClose={() => setDialogAberto(null)}
+/>
+
     </DialogContent>
   </Dialog>
 </div>
