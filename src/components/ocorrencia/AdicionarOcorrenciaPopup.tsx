@@ -77,25 +77,24 @@ const PopupNovaOcorrencia = ({
     .then(res => setClientes(res.data))
     .catch(err => console.error('Erro ao buscar clientes:', err));
 }, []);
-
-  useEffect(() => {
-    debouncedPlacas.forEach((placa, i) => {
-      const placaFormatada = placa.toUpperCase();
-      const placaValida = /^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/;
-      if (placaValida.test(placaFormatada)) {
-        api.get(`/veiculos/${placaFormatada}`)
-          .then(res => {
-            const novaModelos = [...modelos];
-            const novaCores = [...cores];
-            novaModelos[i] = res.data.modelo;
-            novaCores[i] = res.data.cor;
-            setModelos(novaModelos);
-            setCores(novaCores);
-          })
-          .catch(err => console.error('Erro ao buscar dados da placa', err));
-      }
-    });
-  }, [debouncedPlacas[0], debouncedPlacas[1], debouncedPlacas[2]]);
+useEffect(() => {
+  debouncedPlacas.forEach((placa, i) => {
+    const placaFormatada = placa.toUpperCase();
+    const placaValida = /^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/;
+    if (placaValida.test(placaFormatada)) {
+      api.get(`/api/veiculos/${placaFormatada}`)
+        .then(res => {
+          const novaModelos = [...modelos];
+          const novaCores = [...cores];
+          novaModelos[i] = res.data.modelo;
+          novaCores[i] = res.data.cor;
+          setModelos(novaModelos);
+          setCores(novaCores);
+        })
+        .catch(err => console.error('Erro ao buscar dados da placa', err));
+    }
+  });
+}, [debouncedPlacas[0], debouncedPlacas[1], debouncedPlacas[2]]);
 
   useEffect(() => {
     const coords = debouncedCoordenadas.split(',').map(p => p.trim());
@@ -160,7 +159,8 @@ const PopupNovaOcorrencia = ({
     }
 
     try {
-  await api.post('/ocorrencias', novaOcorrencia);
+  await api.post('/api/ocorrencias', novaOcorrencia);
+
   console.log('Ocorrência salva com sucesso');
 } catch (err) {
   console.error('Erro ao salvar ocorrência:', err);
