@@ -72,7 +72,8 @@ const PopupNovaOcorrencia = ({
   const debouncedCoordenadas = useDebounce(coordenadas, 1000);
 
   useEffect(() => {
-  api.get('/clientes/resumo')
+  api.get('/api/clientes/resumo')
+
     .then(res => setClientes(res.data))
     .catch(err => console.error('Erro ao buscar clientes:', err));
 }, []);
