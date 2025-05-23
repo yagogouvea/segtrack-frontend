@@ -401,16 +401,16 @@ onOpenChange={(open) => {
           <DialogContent>
             
             <AdicionarOcorrenciaPopup
-            
-              onSave={() => {
-                console.log('🔁 Buscando ocorrências após salvar nova...');
-                axios.get('/api/ocorrencias') // ✅ correto
-
-  .then(res => setOcorrencias(res.data))
-
-                  .catch(err => console.error('Erro ao atualizar lista de ocorrências', err));
-                setNovoDialogAberto(false);
-              }}
+  onSave={() => {
+    console.log('🔁 Buscando ocorrências após salvar nova...');
+    axios.get('/api/ocorrencias') // ✅ rota correta, no plural
+      .then(res => {
+        console.log('✅ Ocorrências atualizadas:', res.data);
+        setOcorrencias(res.data);
+      })
+      .catch(err => console.error('❌ Erro ao atualizar lista de ocorrências', err));
+    setNovoDialogAberto(false);
+  }}
               onClose={() => setNovoDialogAberto(false)}
             />
           </DialogContent>
