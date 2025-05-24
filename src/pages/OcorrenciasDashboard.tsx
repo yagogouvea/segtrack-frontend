@@ -286,10 +286,17 @@ onOpenChange={(open) => {
             prev.map(o => o.id === atualizada.id ? { ...o, ...atualizada } : o)
           )
         }
+        onClose={() => {
+  setOcorrencias(prev =>
+    prev.map(o => o.id === oc.id ? { ...o, descricao: oc.descricao } : o)
+  );
+}}
+
       />
     </DialogContent>
   </Dialog>
 </div>
+
 
 <Dialog>
   <DialogTrigger asChild>

@@ -8,7 +8,9 @@ import { DialogClose, DialogTitle, DialogDescription } from '@radix-ui/react-dia
 interface Props {
   ocorrencia: Ocorrencia;
   onUpdate: (ocorrenciaAtualizada: Ocorrencia) => void;
+  onClose: () => void; // ✅ Adicione isto
 }
+
 
 const DescricaoPopup: React.FC<Props> = ({ ocorrencia, onUpdate }) => {
   const [descricao, setDescricao] = useState(ocorrencia.descricao || '');

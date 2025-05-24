@@ -8,23 +8,19 @@ export const gerarRelatorioPDF = async (ocorrenciaId: string, setGerando: (v: bo
   try {
     setGerando(true);
 
-    const resDados = await api.get("/api/ocorrencias/${ocorrenciaId}");
-    const dados = await resDados.json();
-
-    if (!resDados.ok) throw new Error('Erro ao buscar dados da ocorrência');
+    const res = await api.get(`/api/ocorrencias/${ocorrenciaId}`);
+    const dados = res.data;
 
     const blob = await pdf(<RelatorioPDF dados={dados} />).toBlob();
 
     const formData = new FormData();
     formData.append('arquivo', blob, `relatorio-${ocorrenciaId}.pdf`);
-    formData.append('ocorrenciaId', dados.id);
+    formData.append('ocorrenciaId', String(dados.id));
     formData.append('cliente', dados.cliente);
     formData.append('tipo', dados.tipo);
     formData.append('dataAcionamento', dados.data_acionamento);
 
-    const upload = await api.post(`http://localhost:3001/api/relatorios/upload`);
-
-    if (!upload.ok) throw new Error('Erro ao enviar relatório');
+    await api.post(`/api/relatorios/upload`, formData);
 
     alert('Relatório gerado e salvo com sucesso!');
   } catch (error) {

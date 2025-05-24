@@ -1,5 +1,41 @@
 // Código ajustado com controle de quebra e layout aplicado corretamente
 import { Document, Page, Text, View, StyleSheet, Image, Link } from '@react-pdf/renderer';
+interface Foto {
+  url: string;
+  legenda?: string;
+}
+interface RelatorioDados {
+  id?: string | number;
+  cliente?: string;
+  tipo?: string;
+  data_acionamento?: string;
+  placa1?: string;
+  modelo1?: string;
+  cor1?: string;
+  placa2?: string;
+  modelo2?: string;
+  cor2?: string;
+  placa3?: string;
+  modelo3?: string;
+  cor3?: string;
+  endereco?: string;
+  cidade?: string;
+  estado?: string;
+  coordenadas?: string;
+  inicio?: string;
+  chegada?: string;
+  termino?: string;
+  km_inicial?: number;
+  km_final?: number;
+  km?: number;
+  descricao?: string;
+  fotos?: Foto[];
+  os?: string;
+  origem_bairro?: string;
+  origem_cidade?: string;
+  origem_estado?: string;
+  condutor?: string;
+}
 
 const styles = StyleSheet.create({
   page: {
@@ -160,9 +196,9 @@ const styles = StyleSheet.create({
   }
 });
 
-const limparHtml = (texto) => texto.replace(/<[^>]+>/g, '').trim();
+const limparHtml = (texto: string) => texto.replace(/<[^>]+>/g, '').trim();
 
-const RelatorioPDF = ({ dados }) => {
+const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
   const {
     id, cliente, tipo, data_acionamento, placa1, modelo1, cor1, placa2, modelo2, cor2,
     placa3, modelo3, cor3, endereco, cidade, estado, coordenadas, inicio, chegada,
@@ -176,13 +212,13 @@ const RelatorioPDF = ({ dados }) => {
 
   return (
     <Document>
-      <Page size="A4" style={styles.page} wrap>
-        <View style={styles.headerVisual} />
-        <View style={styles.headerBarSecondary} />
-        <Image style={styles.logo} src=`${import.meta.env.VITE_API_BASE_URL}/uploads/logo-segtrack.png` />
-        <Text style={styles.tituloPrincipal}>RELATÓRIO DE PRESTAÇÃO DE SERVIÇOS</Text>
-        <Text style={styles.faixaAzul}>RELATÓRIO DE ACIONAMENTO</Text>
-        <Text style={styles.secaoTitulo}>DADOS DA OCORRÊNCIA</Text>
+       <Page size="A4" style={styles.page} wrap>
+      <View style={styles.headerVisual} />
+      <View style={styles.headerBarSecondary} />
+      <Image style={styles.logo} src={`${import.meta.env.VITE_API_BASE_URL}/uploads/logo-segtrack.png`} />
+      <Text style={styles.tituloPrincipal}>RELATÓRIO DE PRESTAÇÃO DE SERVIÇOS</Text>
+      <Text style={styles.faixaAzul}>RELATÓRIO DE ACIONAMENTO</Text>
+      <Text style={styles.secaoTitulo}>DADOS DA OCORRÊNCIA</Text>
 
         <View style={styles.cardUnico}>
           {id && <Text style={styles.linhaCampo}><Text style={styles.rotuloBotao}>Ocorrência Nº:</Text> {id}</Text>}
@@ -216,7 +252,8 @@ const RelatorioPDF = ({ dados }) => {
   <Text style={styles.rotuloBotao}>Tempo Total:</Text> {tempoHoras}h{tempoMinutos}min
 </Text>
 
-          <Text style={styles.linhaCampo}><Text style={styles.rotuloBotao}>Odômetro:</Text> Início: {km_inicial ?? '-'} | Final: {km_final ?? '-'} | Total: {km ?? (km_final - km_inicial)} km</Text>
+          <Text style={styles.linhaCampo}><Text style={styles.rotuloBotao}>Odômetro:</Text> Início: {km_inicial ?? '-'} | Final: {km_final ?? '-'} | Total: {km ?? (km_final !== undefined && km_inicial !== undefined ? km_final - km_inicial : '-')} km
+</Text>
         </View>
         <View style={styles.footerVisual} />
         <View style={styles.footerBarSecondary} />
