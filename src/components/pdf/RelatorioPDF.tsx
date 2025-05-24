@@ -179,7 +179,7 @@ const RelatorioPDF = ({ dados }) => {
       <Page size="A4" style={styles.page} wrap>
         <View style={styles.headerVisual} />
         <View style={styles.headerBarSecondary} />
-        <Image style={styles.logo} src="http://localhost:3001/uploads/logo-segtrack.png" />
+        <Image style={styles.logo} src=`${import.meta.env.VITE_API_BASE_URL}/uploads/logo-segtrack.png` />
         <Text style={styles.tituloPrincipal}>RELATÓRIO DE PRESTAÇÃO DE SERVIÇOS</Text>
         <Text style={styles.faixaAzul}>RELATÓRIO DE ACIONAMENTO</Text>
         <Text style={styles.secaoTitulo}>DADOS DA OCORRÊNCIA</Text>

@@ -133,18 +133,15 @@ export default function RelatoriosPage() {
                       <Button variant="ghost" size="sm" title="Horários"><Clock size={16} /></Button>
                     </DialogTrigger>
                     <DialogContent>
-                      <HorariosPopup
-                        ocorrencia={o}
-                        onUpdate={(ocorrenciaAtualizada: Ocorrencia) => {
-                          setOcorrencias((prev: Ocorrencia[]) =>
-                            prev.map((oc) =>
-                              oc.id === ocorrenciaAtualizada.id ? { ...ocorrenciaAtualizada } : oc
-                            )
-                          );
-                        }}
-                        onClose={buscarOcorrencias}
-                      />
-                    </DialogContent>
+  <HorariosPopup
+    ocorrencia={o}
+    onUpdate={(updateFn) => {
+      setOcorrencias((prev: Ocorrencia[]) => updateFn(prev));
+    }}
+    onClose={buscarOcorrencias}
+  />
+</DialogContent>
+
                   </Dialog>
                   <Dialog>
                     

@@ -9,7 +9,7 @@ import { CopyCheck } from 'lucide-react';
 
 type Props = {
   ocorrencia: Ocorrencia;
-  onUpdate: (dados: Partial<Ocorrencia>) => void;
+ onUpdate: (dados: Ocorrencia) => void;
   onClose: () => void;
 };
 

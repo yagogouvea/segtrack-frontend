@@ -1,3 +1,4 @@
+import api from '@/services/api';
 import React, { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -107,22 +108,20 @@ const ClientePopup: React.FC<Props> = ({ onClose, onSave, clienteEdicao }) => {
   
 
   const onSubmit = async () => {
-    const values = getValues();
-    try {
-      const res = await fetch(`http://localhost:3001/api/clientes${clienteEdicao?.id ? `/${clienteEdicao.id}` : ''}`, {
-        method: clienteEdicao?.id ? "PUT" : "POST",
-      
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-      if (!res.ok) throw new Error("Erro ao salvar cliente");
-      alert("Cliente salvo com sucesso!");
-      onSave();
-    } catch (err) {
-      console.error(err);
-      alert("Erro ao salvar cliente");
-    }
-  };
+  const values = getValues();
+  try {
+    const res = await api[clienteEdicao?.id ? "put" : "post"](
+      `/api/clientes${clienteEdicao?.id ? `/${clienteEdicao.id}` : ''}`,
+      values
+    );
+    alert("Cliente salvo com sucesso!");
+    onSave();
+  } catch (err) {
+    console.error("Erro ao salvar cliente:", err);
+    alert("Erro ao salvar cliente");
+  }
+};
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 overflow-y-auto">

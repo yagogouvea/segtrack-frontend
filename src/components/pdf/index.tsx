@@ -8,7 +8,7 @@ export const gerarRelatorioPDF = async (ocorrenciaId: string, setGerando: (v: bo
   try {
     setGerando(true);
 
-    const resDados = await fetch(`http://localhost:3001/api/ocorrencias/${ocorrenciaId}`);
+    const resDados = await api.get("/api/ocorrencias/${ocorrenciaId}");
     const dados = await resDados.json();
 
     if (!resDados.ok) throw new Error('Erro ao buscar dados da ocorrência');

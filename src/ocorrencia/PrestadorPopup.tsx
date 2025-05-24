@@ -25,7 +25,8 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
 
   useEffect(() => {
     api.get(`/api/prestadores/popup`)
-      .then(res => res.json())
+      .then(res => res.data)
+
       .then(data => {
         if (Array.isArray(data)) {
           setPrestadores(data);
